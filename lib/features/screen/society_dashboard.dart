@@ -16,8 +16,16 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      //backgroundColor: const Color(0xFFF9F9F7),
+     backgroundColor: const Color(0xFF0D2C54),
       appBar: AppBar(
+        backgroundColor: const Color(0xFF0D2C54),
+        title: const Text('DashBoard', style: TextStyle(color: Colors.white, fontSize: 18)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.pop(),
+        ),
+      ),
+      /*appBar: AppBar(
         title: const Text('DashBoard'),
         // Force back button even if framework thinks there is no stack history
         leading: context.canPop()
@@ -25,7 +33,7 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
           icon: const Icon(Icons.arrow_back),
           onPressed: () => context.pop(),
         ): null,
-      ),
+      ),*/
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -230,6 +238,15 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
                   case 'Visitors':
                     context.push(AppRouter.addVisitor);
                     break; // Optional in modern Dart for regular code blocks, but good practice
+                  case 'Complaints':
+                    context.push(AppRouter.complain_dashboard);
+                    break; // Optional in modern Dart for regular code blocks, but good practice
+                  case 'Accounting':
+                    context.push(AppRouter.accounting);
+                    break;
+                  case 'Polling':
+                    context.push(AppRouter.pollsVoting);
+                    break;
                   case 'rejected':
                     print('Application denied.');
                     break;

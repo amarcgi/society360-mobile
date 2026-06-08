@@ -101,16 +101,15 @@ class _ProfileWrapperState
 
 
     return Scaffold(
+        backgroundColor: const Color(0xFFF9F9F7),
         appBar: AppBar(
-          title: const Text('Profile Setup'),
-          // Force back button even if framework thinks there is no stack history
-          leading: context.canPop()
-              ? IconButton(
-            icon: const Icon(Icons.arrow_back),
+          backgroundColor: const Color(0xFF0D2C54),
+          title: const Text('Profile Setup', style: TextStyle(color: Colors.white, fontSize: 18)),
+          leading: context.canPop()?IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => context.pop(),
-          )
-              : null,
-        ),
+          ):null),
+
       body:AnimatedSwitcher(
         duration: const Duration(
             milliseconds: 300),

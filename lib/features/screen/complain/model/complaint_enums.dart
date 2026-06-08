@@ -1,0 +1,7 @@
+enum ComplaintStatus {
+  OPEN, ASSIGNED, IN_PROGRESS, RESOLVED, CLOSED, REOPENED, CANCELLED
+}
+
+enum Priority { LOW, MEDIUM, HIGH }
+
+enum Roles { ADMIN, SECURITY, MAINTENANCE }

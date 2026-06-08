@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-
+import '../../features/screen/accounting/accounting_mainScreen.dart';
+import '../../features/screen/complain/complaints_dashboard_screen.dart';
+import '../../features/screen/complain/raise_complaint_form_screen.dart';
 import '../../features/screen/login/login_screen.dart';
 import '../../features/screen/login/otp_screen.dart';
-//import '../../features/screen/Profile/Profile_wizard_screen.dart';
-
+import '../../features/screen/polls/polls_screen.dart';
 import '../../features/screen/profile/widgets/profile_wrapper.dart';
 import '../../features/screen/society_dashboard.dart';
 import '../../features/screen/splash/splash_screen.dart';
@@ -13,11 +14,7 @@ import '../../features/screen/visitors/gate_approval_screen.dart';
 import '../../features/screen/visitors/model/visitor_history_model.dart';
 import '../../features/screen/visitors/visitor_detail_screen.dart';
 import '../../features/screen/visitors/visitor_history_screen.dart';
-import '../../features/screen/visitors/visitor_management_screen.dart';
-// Import your screens here
-// import '../../presentation/screens/splash_screen.dart';
-// import '../../presentation/screens/login_screen.dart';
-// import '../../presentation/screens/dashboard_screen.dart';
+
 
 class AppRouter {
   // Centralized Route Names as Constants to avoid typos
@@ -31,8 +28,10 @@ class AppRouter {
   static const String gateApproval = '/gate-approval';
   static const String visitorHistory = '/visitor-history';
   //static const String visitorManageMent = '/visitor-management';
-
-
+  static const String complain_dashboard = '/complain-dashboard';
+  static const String raiseComplain = '/raise-complain';
+  static const String accounting = '/accounting';
+  static const String pollsVoting = '/polls-voting';
 
 
   static final GoRouter router = GoRouter(
@@ -71,10 +70,22 @@ class AppRouter {
         path: visitorHistory,
         builder: (context, state) => const VisitorHistoryScreen(),
       ),
-      /*GoRoute(
-        path: Profile_screen,
-        builder: (context, state) => const ProfileWizardScreen(key: ValueKey('ProfileWizard-screen')),
-      ),*/
+      GoRoute(
+        path: complain_dashboard,
+        builder: (context, state) => const ComplaintsDashboardScreen(key: ValueKey('Complaints-DashboardScreen-screen')),
+      ),
+      GoRoute(
+        path: raiseComplain,
+        builder: (context, state) => const RaiseComplaintFormScreen(key: ValueKey('raise_complain')),
+      ),
+      GoRoute(
+        path: accounting,
+        builder: (context, state) => const AccountingMainScreen(key: ValueKey('raise_complain')),
+      ),
+      GoRoute(
+        path: pollsVoting,
+        builder: (context, state) =>  PollsScreen(),
+      ),
       // ── Add to app_router.dart ───────────────
       GoRoute(
         path: AppRouter.Profile,

@@ -52,6 +52,8 @@ dependencies:
   # ── Navigation ──────────────────────────────
   go_router: ^13.2.0             # Routing
 
+  file_picker: ^8.0.0 # Or your preferred version
+
   # ── Secure Storage ──────────────────────────
   flutter_secure_storage: ^9.0.0 # Store JWT token
 
