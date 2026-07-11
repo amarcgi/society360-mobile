@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:society360_app/features/screen/accounting/statement_screen.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/shared/widgets/app_bar.dart';
 import '../../../core/shared/widgets/app_text_styles.dart';
 import 'bloc/accounting_bloc.dart';
 import 'bloc/accounting_event.dart';
@@ -31,7 +32,7 @@ class _AccountingMainScreenState extends State<AccountingMainScreen> with Single
       create: (context) => AccountingBloc()..add(LoadAccounting()),
       child: Scaffold(
         //backgroundColor: const Color(0xFFF9F9F7),
-        appBar: AppBar(
+        /*appBar: AppBar(
           backgroundColor: const Color(0xFF0D2C54),
           title: const Text('Accounting', style: TextStyle(color: Colors.white, fontSize: 18)),
           leading: IconButton(
@@ -45,6 +46,19 @@ class _AccountingMainScreenState extends State<AccountingMainScreen> with Single
               indicatorColor: const Color(0xFF00C2CB),
               tabs: const [Tab(text: "Dues"), Tab(text: "Statement"), Tab(text: "Society Ledger")],
               labelStyle: TextStyle(color: Colors.white, fontSize: 18))
+        ),
+*/
+        appBar: CustomAppBars.customAppBar(
+            //backgroundColor: const Color(0xFF0D2C54),
+            title:'Accounting',
+            context: context,
+            bottom: TabBar(controller: _tabController,
+                labelColor: Colors.white,
+                //isScrollable: true,
+                unselectedLabelColor: Colors.white60,
+                indicatorColor: const Color(0xFF00C2CB),
+                tabs: const [Tab(text: "Dues"), Tab(text: "Statement"), Tab(text: "Society Ledger")],
+                labelStyle: TextStyle(color: Colors.white, fontSize: 18))
         ),
         body: TabBarView(controller: _tabController, children: const [DuesScreen(), StatementScreen(), ExpensesScreen()]),
       ),

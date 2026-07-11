@@ -8,6 +8,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/shared/widgets/app_card.dart';
+import '../../../../core/shared/widgets/app_text_styles.dart';
 import '../../../../core/theme/AppColors.dart';
 
 class SectionLabel extends StatelessWidget {
@@ -21,11 +22,12 @@ class SectionLabel extends StatelessWidget {
             bottom: 8),
         child: Text(
           text.toUpperCase(),
-          style: const TextStyle(
+          /*style: const TextStyle(
             fontSize: 11, fontWeight: FontWeight.w600,
             color: AppColors.textSecondary,
             letterSpacing: 0.5,
-          ),
+          ),*/
+          style: AppTextStyles.labelLarge,
         ),
       );
 }
@@ -182,7 +184,7 @@ class InfoNotice extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(child: Text(text,
                 style: const TextStyle(
-                    fontSize: 11,
+                    fontSize: 16,
                     color: Color(0xFF633806),
                     height: 1.4))),
           ],
@@ -255,20 +257,21 @@ class AddButton extends StatelessWidget {
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-                color: AppColors.border,
+                color: AppColors.success, // Changed to green
                 style: BorderStyle.solid),
+            color: AppColors.success.withOpacity(0.1), // Light green background
           ),
           child: Row(
             mainAxisAlignment:
             MainAxisAlignment.center,
             children: [
               Icon(icon, size: 18,
-                  color: AppColors.textSecondary),
+                  color: AppColors.success), // Changed to green
               const SizedBox(width: 8),
               Text(label,
                   style: const TextStyle(
                       fontSize: 13,
-                      color: AppColors.textSecondary)),
+                      color: AppColors.success)), // Changed to green
             ],
           ),
         ),

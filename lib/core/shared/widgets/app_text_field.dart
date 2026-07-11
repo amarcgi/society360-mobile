@@ -54,6 +54,7 @@ class _AppTextFieldState
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+
       controller: widget.controller,
       keyboardType: widget.keyboardType,
       obscureText: widget.obscureText

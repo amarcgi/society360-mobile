@@ -141,7 +141,7 @@ class _Step1State
                     ]),
                   ),
 
-                  const Gap(24),
+                  const Gap(10),
 
                   // Basic Details
                   SectionLabel('Basic details'),

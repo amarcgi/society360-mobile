@@ -13,16 +13,8 @@ import 'features/screen/login/bloc/auth_bloc.dart';
 import 'features/screen/profile/bloc/profile_bloc.dart';
 import 'features/screen/profile/widgets/save_profile_usecase.dart';
 
-
-
-
-
-
-
 final sl = GetIt.instance;
-
 Future<void> initDependencies() async {
-
   // ── BLoC ─────────────────────────────────
   // factory = new instance each time
   sl.registerFactory(() => AuthBloc(sl()));
@@ -51,11 +43,11 @@ Future<void> initDependencies() async {
 
 // Repository
   sl.registerLazySingleton<ProfileRepository>(
-          () => ProfileRepositoryImpl(sl()));
+          () => ProfileRepositoryImpl());
 
 // DataSource
-  sl.registerLazySingleton<ProfileRemoteDataSource>(
-          () => ProfileRemoteDataSourceImpl());
+  /*sl.registerLazySingleton<ProfileRemoteDataSource>(
+          () => ProfileRemoteDataSourceImpl());*/
 
 
 }

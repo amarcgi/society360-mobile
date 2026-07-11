@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/screen/accounting/accounting_mainScreen.dart';
+import '../../features/screen/amenities/amenities.dart';
+import '../../features/screen/announcemnet/announcement_detailScreen.dart';
+import '../../features/screen/announcemnet/announcements_screen.dart';
+import '../../features/screen/announcemnet/model/announcement.dart';
 import '../../features/screen/complain/complaints_dashboard_screen.dart';
 import '../../features/screen/complain/raise_complaint_form_screen.dart';
 import '../../features/screen/login/login_screen.dart';
@@ -32,6 +36,10 @@ class AppRouter {
   static const String raiseComplain = '/raise-complain';
   static const String accounting = '/accounting';
   static const String pollsVoting = '/polls-voting';
+  static const String  amenitiesScreen= '/amenities';
+
+  static const String  announcementsScreen= '/announcements';
+  static const String  announcementDetailScreen= '/announcementDetail';
 
 
   static final GoRouter router = GoRouter(
@@ -83,6 +91,15 @@ class AppRouter {
         builder: (context, state) => const AccountingMainScreen(key: ValueKey('raise_complain')),
       ),
       GoRoute(
+        path: amenitiesScreen,
+        builder: (context, state) => const AmenitiesScreen(key: ValueKey('amenities_screen')),
+      ),
+      GoRoute(
+        path: announcementsScreen,
+        builder: (context, state) => const AnnouncementsScreen(key: ValueKey('announcements_screen')),
+      ),
+
+      GoRoute(
         path: pollsVoting,
         builder: (context, state) =>  PollsScreen(),
       ),
@@ -113,6 +130,19 @@ class AppRouter {
           );
         },
       ),
+      GoRoute(
+        path: AppRouter.announcementDetailScreen,
+        builder: (context, state) {
+          final Announcement announcement = state.extra as Announcement;
+          return AnnouncementDetailScreen(
+             announcement: announcement,
+          );
+        },
+      ),
+
+
+
+
     ],
     // 💡 Bonus: Centralized Redirection (e.g., Guard routes if user isn't logged in)
     redirect: (context, state) {

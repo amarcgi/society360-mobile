@@ -5,9 +5,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/AppColors.dart';
-
-
-class ProfileHeader extends StatelessWidget {
+class ProfileHeader extends StatefulWidget {
   final String title;
   final String subtitle;
   final int step;
@@ -26,39 +24,44 @@ class ProfileHeader extends StatelessWidget {
   });
 
   @override
+  State<ProfileHeader> createState() => _ProfileHeaderState();
+}
+
+class _ProfileHeaderState extends State<ProfileHeader> {
+  @override
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.primary,
       padding: EdgeInsets.only(
-        top: MediaQuery.of(context)
-            .padding.top + 12,
-        left: 16, right: 16, bottom: 14,
+        top: MediaQuery.of(context).padding.top + 12,
+        left: 16,
+        right: 16,
+        bottom: 14,
       ),
       child: Column(
-        crossAxisAlignment:
-        CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(children: [
-            if (showBack)
+            if (widget.showBack)
               GestureDetector(
-                onTap: onBack,
+                onTap: widget.onBack,
                 child: Container(
-                  width: 32, height: 32,
+                  width: 32,
+                  height: 32,
                   decoration: BoxDecoration(
-                    color: Colors.white
-                        .withOpacity(0.15),
-                    borderRadius:
-                    BorderRadius.circular(9),
+                    color: Colors.white.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(9),
                   ),
                   child: const Icon(
                     Icons.arrow_back_ios_new_rounded,
-                    color: Colors.white, size: 16,
+                    color: Colors.white,
+                    size: 16,
                   ),
                 ),
               ),
-            if (showBack) const SizedBox(width: 10),
+            if (widget.showBack) const SizedBox(width: 10),
             Expanded(
-              child: Text(title,
+              child: Text(widget.title,
                   style: GoogleFonts.sora(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
@@ -66,13 +69,13 @@ class ProfileHeader extends StatelessWidget {
                   )),
             ),
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 4),
+              padding:
+              const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: Colors.white.withOpacity(0.15),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Text('$step of $totalSteps',
+              child: Text('${widget.step} of ${widget.totalSteps}',
                   style: GoogleFonts.sora(
                     fontSize: 11,
                     color: Colors.white70,
@@ -81,11 +84,10 @@ class ProfileHeader extends StatelessWidget {
           ]),
           const SizedBox(height: 4),
           Padding(
-            padding: EdgeInsets.only(
-                left: showBack ? 42 : 0),
-            child: Text(subtitle,
+            padding: EdgeInsets.only(left: widget.showBack ? 42 : 0),
+            child: Text(widget.subtitle,
                 style: GoogleFonts.sora(
-                  fontSize: 11,
+                  fontSize: 15,
                   color: Colors.white60,
                 )),
           ),
@@ -93,22 +95,22 @@ class ProfileHeader extends StatelessWidget {
           // Progress bar
           Row(
             children: List.generate(
-                totalSteps, (i) => Expanded(
-              child: Container(
-                margin: EdgeInsets.only(
-                    right: i < totalSteps-1 ? 4 : 0),
-                height: 3,
-                decoration: BoxDecoration(
-                  color: i < step
-                      ? Colors.white.withOpacity(0.5)
-                      : i == step - 1
-                      ? AppColors.accent
-                      : Colors.white.withOpacity(0.2),
-                  borderRadius:
-                  BorderRadius.circular(2),
+              widget.totalSteps,
+                  (i) => Expanded(
+                child: Container(
+                  margin: EdgeInsets.only(right: i < widget.totalSteps - 1 ? 4 : 0),
+                  height: 3,
+                  decoration: BoxDecoration(
+                    color: i < widget.step
+                        ? Colors.white.withOpacity(0.5)
+                        : i == widget.step - 1
+                        ? AppColors.accent
+                        : Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
                 ),
               ),
-            )),
+            ),
           ),
         ],
       ),

@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart'; // Make sure to add intl to your pubspec.yaml
 
 import '../../../core/router/app_router.dart';
+import '../../../core/shared/widgets/app_bar.dart';
 import 'model/visitor_history_model.dart';
 
 class VisitorHistoryScreen extends StatefulWidget {
@@ -103,14 +104,22 @@ class _VisitorHistoryScreenState extends State<VisitorHistoryScreen> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F7),
-      appBar: AppBar(
+      /*appBar: AppBar(
         backgroundColor: const Color(0xFF0D2C54),
         title: const Text('Visitor History', style: TextStyle(color: Colors.white, fontSize: 18)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => context.go(AppRouter.addVisitor),
         ),
+      ),*/
+
+
+      appBar: CustomAppBars.customAppBar(
+        context: context,
+        title: 'Visitor History'
       ),
+
+
       body: Column(
         children: [
           // Search & Date Filter Header Panel

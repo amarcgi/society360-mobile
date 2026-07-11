@@ -20,7 +20,7 @@ class AppTextStyles {
 
   // ── Headings ─────────────────────────────
   static TextStyle h1 = GoogleFonts.sora(
-    fontSize: 24, fontWeight: FontWeight.w700,
+    fontSize: 20, fontWeight: FontWeight.w700,
     color: AppColors.textPrimary,
   );
 

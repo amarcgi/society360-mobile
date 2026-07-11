@@ -82,7 +82,7 @@ class AppInfoRow extends StatelessWidget {
           MainAxisAlignment.spaceBetween,
           children: [
             Text(label,
-                style: AppTextStyles.bodySmall),
+                style: AppTextStyles.bodyLarge),
             Text(value,
                 style: AppTextStyles.labelLarge
                     .copyWith(color: valueColor)),

@@ -1,7 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/router/app_router.dart';
+import '../../../core/shared/widgets/app_bar.dart';
 import 'model/poll_card.dart';
 import 'model/poll_option.dart';
 class PollsScreen extends StatefulWidget {
@@ -43,8 +44,26 @@ class _PollsScreenState extends State<PollsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF2F2F0),
-      appBar: AppBar(title: const Text("Polls & Voting"), backgroundColor: const Color(0xFF0F2D52)),
+      //backgroundColor: const Color(0xFFF2F2F0),
+      /*appBar: AppBar(
+        backgroundColor: const Color(0xFF0D2C54),
+        title: const Text('Poll & Voting', style: TextStyle(color: Colors.white, fontSize: 18)),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () => context.pop(),
+        ),
+      ),*/
+
+      appBar:CustomAppBars.customAppBar(
+        context: context,
+        title: 'Poll & Voting',
+        actions: [
+          IconButton(icon: const Icon(Icons.library_books_sharp, color: Colors.white), onPressed: () {
+            context.push(AppRouter.visitorHistory);
+          }),
+        ],
+      ),
+
       body: ListView.builder(
         padding: const EdgeInsets.all(16),
         itemCount: _polls.length,

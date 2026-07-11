@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:society360_app/core/shared/widgets/app_text_styles.dart';
 import '../../core/router/app_router.dart';
+import '../../core/shared/widgets/app_bar.dart';
 import '../../core/theme/AppColors.dart';
 
 class SocietyDashboard extends StatefulWidget {
@@ -17,13 +19,18 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
      backgroundColor: const Color(0xFF0D2C54),
-      appBar: AppBar(
+     /* appBar: AppBar(
         backgroundColor: const Color(0xFF0D2C54),
         title: const Text('DashBoard', style: TextStyle(color: Colors.white, fontSize: 18)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => context.pop(),
         ),
+      ),*/
+
+      appBar: CustomAppBars.customAppBar(
+        context: context,
+        title: 'DashBoard',
       ),
       /*appBar: AppBar(
         title: const Text('DashBoard'),
@@ -250,6 +257,14 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
                   case 'rejected':
                     print('Application denied.');
                     break;
+                  case 'Amenities':
+                    context.push(AppRouter.amenitiesScreen);
+                    break;
+                  case 'Announcements':
+                    context.push(AppRouter.announcementsScreen);
+                    break;
+
+
                   default:
                     print('Unknown status.'); // Executes if no matches are found
                 }
@@ -270,7 +285,7 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
                   Text(
                     item['label'],
                     textAlign: TextAlign.center,
-                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w500),
+                    style: AppTextStyles.labelLarge,
                   ),
                 ],
               ),

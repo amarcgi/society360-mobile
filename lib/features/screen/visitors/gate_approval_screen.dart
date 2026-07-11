@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../core/router/app_router.dart';
+import '../../../core/shared/widgets/app_bar.dart';
 class GateApprovalScreen extends StatelessWidget {
   const GateApprovalScreen({super.key});
 
@@ -8,14 +11,24 @@ class GateApprovalScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F7),
-      appBar: AppBar(
+      /*appBar: AppBar(
         backgroundColor: const Color(0xFF0D2C54),
         title: const Text('Gate Approval', style: TextStyle(color: Colors.white, fontSize: 18)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => context.go('/visitor-management/visitor-detail'),
         ),
+      ),*/
+      appBar:CustomAppBars.customAppBar(
+        context: context,
+        title: 'Gate Approval',
+        actions: [
+          IconButton(icon: const Icon(Icons.library_books_sharp, color: Colors.white), onPressed: () {
+            context.push(AppRouter.visitorHistory);
+          }),
+        ],
       ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(

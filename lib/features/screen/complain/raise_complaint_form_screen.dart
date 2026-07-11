@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart'; // Handles picking multiple files
+import '../../../core/router/app_router.dart';
+import '../../../core/shared/widgets/app_bar.dart';
 import 'model/complaint_enums.dart';
 import 'model/complaint_models.dart';
 
@@ -115,13 +117,23 @@ class _RaiseComplaintFormScreenState extends State<RaiseComplaintFormScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F7),
-      appBar: AppBar(
+      /*appBar: AppBar(
         backgroundColor: const Color(0xFF0D2C54),
         title: const Text('Raise Complaint', style: TextStyle(color: Colors.white, fontSize: 18)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => context.pop(),
         ),
+      ),
+*/
+      appBar:CustomAppBars.customAppBar(
+        context: context,
+        title: 'Raise Complaint',
+        actions: [
+          IconButton(icon: const Icon(Icons.library_books_sharp, color: Colors.white), onPressed: () {
+            context.push(AppRouter.visitorHistory);
+          }),
+        ],
       ),
       body: Form(
         key: _formKey,

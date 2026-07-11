@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:society360_app/core/router/app_router.dart';
+import 'package:society360_app/core/shared/widgets/app_bar.dart';
+import 'package:society360_app/core/theme/AppColors.dart';
+
+import '../../../core/shared/widgets/app_text_styles.dart';
 class AddVisitorScreen extends StatefulWidget {
   const AddVisitorScreen({super.key});
 
@@ -15,13 +19,22 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F7),
-      appBar: AppBar(
+      /*appBar: AppBar(
         backgroundColor: const Color(0xFF0D2C54),
         title: const Text('Add Visitor', style: TextStyle(color: Colors.white, fontSize: 18)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () =>{context.go(AppRouter.dashboard)}
         ),
+        actions: [
+          IconButton(icon: const Icon(Icons.library_books_sharp, color: Colors.white), onPressed: () {
+            context.push(AppRouter.visitorHistory);
+          }),
+        ],
+      ),*/
+      appBar: CustomAppBars.customAppBar(
+        context: context,
+        title: 'Add Visitor',
         actions: [
           IconButton(icon: const Icon(Icons.library_books_sharp, color: Colors.white), onPressed: () {
             context.push(AppRouter.visitorHistory);
@@ -46,7 +59,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
             const SizedBox(height: 16),
             _buildInputField('MOBILE NUMBER *', 'Enter phone number'),
             const SizedBox(height: 16),
-            const Text('VISITOR TYPE', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
+             Text('VISITOR TYPE', style: AppTextStyles.labelLarge),
             const SizedBox(height: 8),
             _buildVisitorTypeWrap(),
             const SizedBox(height: 16),
@@ -67,7 +80,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               onPressed: () {},
-              child: const Text('Pre-approve Visitor', style: TextStyle(color: Color(0xFF0D2C54))),
+              child:  Text('Pre-approve Visitor', style: AppTextStyles.h2),
             ),
             const SizedBox(height: 12),
             ElevatedButton(
@@ -89,7 +102,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.grey)),
+        Text(label, style:  AppTextStyles.labelLarge),
         const SizedBox(height: 6),
         TextField(
           decoration: InputDecoration(
@@ -114,7 +127,7 @@ class _AddVisitorScreenState extends State<AddVisitorScreen> {
         return ChoiceChip(
           label: Text(type),
           selected: isSelected,
-          selectedColor: const Color(0xFF0D2C54),
+          selectedColor: AppColors.success,
           selectedShadowColor: isSelected ? Colors.white : Colors.black,
           backgroundColor: Colors.white,
           onSelected: (_) => setState(() => selectedType = type),

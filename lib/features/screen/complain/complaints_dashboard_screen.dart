@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:society360_app/core/router/app_router.dart';
+import 'package:society360_app/core/shared/widgets/app_bar.dart';
 
 import 'model/complaint_enums.dart';
 import 'model/complaint_models.dart';
@@ -109,13 +110,14 @@ class _ComplaintsDashboardScreenState extends State<ComplaintsDashboardScreen> w
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F7),
 
-      appBar: AppBar(
+      /*appBar: AppBar(
         backgroundColor: const Color(0xFF0D2C54),
         title: const Text('Society Helpdesk', style: TextStyle(color: Colors.white, fontSize: 18)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => context.pop(),
         ),
+
         bottom: TabBar(
           controller: _tabController,
           labelColor: Colors.white,
@@ -129,7 +131,23 @@ class _ComplaintsDashboardScreenState extends State<ComplaintsDashboardScreen> w
             Tab(text: 'All Claims'),
           ],
         ),
-      ),
+      ),*/
+        appBar:CustomAppBars.customAppBar(context: context, title: 'Society Helpdesk',
+          bottom: TabBar(
+            controller: _tabController,
+            labelColor: Colors.white,
+            unselectedLabelColor: Colors.white60,
+            indicatorColor: Colors.tealAccent,
+            labelStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            unselectedLabelStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.w500),
+            tabs: const [
+              Tab(text: 'Active Logs'),
+              Tab(text: 'Resolved'),
+              Tab(text: 'All Claims'),
+            ],
+          ),
+        ),
+
       body: Column(
         children: [
           _buildFilterChipBar(),

@@ -5,8 +5,10 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/shared/widgets/app_bar.dart';
 import '../../../../core/shared/widgets/app_loader.dart';
 import '../../../../core/shared/widgets/app_snackbar.dart';
+import '../../../../core/theme/AppColors.dart';
 import '../../../../injection.dart';
 
 import '../bloc/profile_bloc.dart';
@@ -98,17 +100,20 @@ class _ProfileWrapperState
   Widget _buildStep(
       BuildContext context,
       ProfileStepState state) {
-
-
     return Scaffold(
-        backgroundColor: const Color(0xFFF9F9F7),
-        appBar: AppBar(
+        backgroundColor: AppColors.background,
+       appBar: CustomAppBars.customAppBar(
+         context: context,
+         title: 'Profile Setup',
+         showBackButton: state.step > 1,
+       ),
+       /* appBar: AppBar(
           backgroundColor: const Color(0xFF0D2C54),
           title: const Text('Profile Setup', style: TextStyle(color: Colors.white, fontSize: 18)),
           leading: context.canPop()?IconButton(
             icon: const Icon(Icons.arrow_back, color: Colors.white),
             onPressed: () => context.pop(),
-          ):null),
+          ):null),*/
 
       body:AnimatedSwitcher(
         duration: const Duration(
@@ -153,46 +158,6 @@ class _ProfileWrapperState
 
     );
 
-    // ✅ Animate between steps
-    /*return  AnimatedSwitcher(
-      duration: const Duration(
-          milliseconds: 300),
-      transitionBuilder: (child, anim) =>
-          SlideTransition(
-            position: Tween<Offset>(
-              begin: const Offset(1, 0),
-              end: Offset.zero,
-            ).animate(CurvedAnimation(
-              parent: anim,
-              curve: Curves.easeOutCubic,
-            )),
-            child: child,
-          ),
-      child: switch (state.step) {
-        1 => Step1PersonalScreen(
-          key: const ValueKey(1),
-          mobile: widget.mobile,
-          data: state.data,
-        ),
-        2 => Step2FlatScreen(
-          key: const ValueKey(2),
-          data: state.data,
-          flatNumber:   widget.flatNumber,
-          buildingName: widget.buildingName,
-          societyName:  widget.societyName,
-        ),
-        3 => Step3FamilyScreen(
-          key: const ValueKey(3),
-          data: state.data,
-        ),
-        4 => Step4SuccessScreen(
-          key: const ValueKey(4),
-          data: state.data,
-          flatNumber:   widget.flatNumber,
-          buildingName: widget.buildingName,
-        ),
-        _ => const SizedBox.shrink(),
-      },
-    );*/
+
   }
 }

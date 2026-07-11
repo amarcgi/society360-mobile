@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:society360_app/core/router/app_router.dart';
 
+import '../../../core/shared/widgets/app_bar.dart';
 import 'model/visitor_history_model.dart';
 class VisitorDetailScreen extends StatelessWidget {
   final VisitorHistoryModel visitor;
@@ -12,13 +13,23 @@ class VisitorDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF9F9F7),
-      appBar: AppBar(
+     /* appBar: AppBar(
         backgroundColor: const Color(0xFF0D2C54),
         title: const Text('Visitor Detail', style: TextStyle(color: Colors.white, fontSize: 18)),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () => context.go(AppRouter.visitorHistory),
         ),
+      ),*/
+
+        appBar: CustomAppBars.customAppBar(
+        context: context,
+        title: 'Visitor Detail',
+        actions: [
+          IconButton(icon:  const Icon(Icons.arrow_back, color: Colors.white), onPressed: () {
+            context.push(AppRouter.visitorHistory);
+          }),
+        ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
