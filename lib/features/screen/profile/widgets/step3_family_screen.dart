@@ -286,7 +286,7 @@ class _Step3State
                       vehicleNumber: plateCtrl.text
                           .trim().toUpperCase(),
                       vehicleType:   type,
-                      make:  makeCtrl.text.trim().isEmpty
+                      model:  makeCtrl.text.trim().isEmpty
                           ? null : makeCtrl.text.trim(),
                       color: colorCtrl.text.trim().isEmpty
                           ? null : colorCtrl.text.trim(),

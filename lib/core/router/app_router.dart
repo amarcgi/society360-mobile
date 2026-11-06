@@ -26,7 +26,7 @@ class AppRouter {
   static const String login = '/login';
   static const String dashboard = '/dashboard';
   static const String otp_screen = '/otp_screen';
-  static const String Profile = '/Profile';
+  static const String profile = '/Profile';
   static const String addVisitor = '/add-visitor';
   static const String visitorDetail = '/visitor-detail';
   static const String gateApproval = '/gate-approval';
@@ -48,7 +48,13 @@ class AppRouter {
     routes: [
       GoRoute(
         path: dashboard,
-        builder: (context, state) => const SocietyDashboard(key: ValueKey('dash-board')),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, String>;
+          return SocietyDashboard(
+            mobile: extra['mobile']!,
+            role: extra['role']!,
+          );
+        }
       ),
       GoRoute(
         path: splash,
@@ -105,7 +111,7 @@ class AppRouter {
       ),
       // ── Add to app_router.dart ───────────────
       GoRoute(
-        path: AppRouter.Profile,
+        path: AppRouter.profile,
         builder: (_, state) {
           final extra = state.extra
           as Map<String, String>;

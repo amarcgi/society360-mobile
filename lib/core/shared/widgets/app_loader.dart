@@ -1,5 +1,5 @@
 // lib/shared/widgets/app_loader.dart
-
+import 'package:flutter/material.dart';
 import 'package:flutter/material.dart';
 
 import '../../theme/AppColors.dart';
@@ -184,4 +184,43 @@ class AppListShimmer extends StatelessWidget {
           ),
         ),
       );
+}
+
+
+
+
+OverlayEntry? _loaderEntry;
+
+void showOverlayLoader(BuildContext context, {String? message}) {
+  if (_loaderEntry != null) return; // Prevent duplicate loaders
+
+  final entry = OverlayEntry(
+    builder: (_) => Stack(
+      children: [
+        // Dims background & blocks all user tap interactions
+        const ModalBarrier(
+          color: Colors.black54,
+          dismissible: false,
+        ),
+        // Centered loader card
+        Center(
+          child: AppFullScreenLoader(message: message),
+        ),
+      ],
+    ),
+  );
+
+  _loaderEntry = entry;
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final overlay = Overlay.of(context, rootOverlay: true);
+    if (overlay != null && _loaderEntry == entry) {
+      overlay.insert(entry);
+    }
+  });
+}
+
+void hideOverlayLoader() {
+  _loaderEntry?.remove();
+  _loaderEntry = null;
 }

@@ -13,18 +13,15 @@ class OtpRequestModel {
 class VerifyOtpModel {
   final String mobileNumber;
   final String otp;
-  final String role;
 
   const VerifyOtpModel({
     required this.mobileNumber,
-    required this.otp,
-    required this.role,
+    required this.otp
   });
 
   Map<String, dynamic> toJson() => {
     'mobileNumber': mobileNumber,
     'otp': otp,
-    'role': role,
   };
 }
 

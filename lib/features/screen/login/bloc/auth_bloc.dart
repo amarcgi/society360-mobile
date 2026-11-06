@@ -34,9 +34,10 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
     try {
       //TODO as if no api is there, just simulating success response
-      //await _repository.requestOtp(event.mobile);
+      await _repository.requestOtp(event.mobile);
       emit(OtpRequestSuccess(event.mobile));
     } catch (e) {
+      print('Exception in _onRequestOtp: $e');
       emit(OtpRequestFailure(
           e.toString().replaceAll('Exception: ', '')));
     }
@@ -49,11 +50,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     emit(OtpVerifyLoading());
 
     try {
-     // final response = await _repository.verifyOtp(
-     //   event.mobile,
-     //   event.otp,
-     //   event.role,
-     // );
+      await Future.delayed(const Duration(seconds: 5));
+      final response = await _repository.verifyOtp(
+        event.mobile,
+        event.otp
+      );
 
       //emit(OtpVerifySuccess(
       //  role: response.role,

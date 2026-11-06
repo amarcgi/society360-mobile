@@ -5,6 +5,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/router/app_router.dart';
 import '../../../../core/shared/widgets/app_bar.dart';
 import '../../../../core/shared/widgets/app_loader.dart';
 import '../../../../core/shared/widgets/app_snackbar.dart';
@@ -12,6 +13,7 @@ import '../../../../core/theme/AppColors.dart';
 import '../../../../injection.dart';
 
 import '../bloc/profile_bloc.dart';
+import '../bloc/profile_event.dart';
 import '../bloc/profile_state.dart';
 import 'step1_personal_screen.dart';
 import 'step2_flat_screen.dart';
@@ -51,7 +53,7 @@ class _ProfileWrapperState
   @override
   void initState() {
     super.initState();
-    _bloc = sl<ProfileBloc>();
+    _bloc = sl<ProfileBloc>()..add(LoadProfileEvent(widget.mobile));
   }
 
   @override
@@ -68,17 +70,30 @@ class _ProfileWrapperState
           ProfileState>(
         bloc: _bloc,
         listener: (context, state) {
-          if (state is ProfileSuccess) {
+          if(state is ProfileLoading){
+            showOverlayLoader(context,message:'Loading profile...');
+          }
+          else if (state is ProfileLoadSuccess) {
+            hideOverlayLoader();
             // ✅ Navigate to home
             //Nav.goHome(context);
           }
-          if (state is ProfileFailure) {
+          if (state is ProfileLoadFailure) {
+            print('object: ${state.message}');
+            hideOverlayLoader();
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRouter.dashboard);
+            }
             AppSnackbar.error(
                 context, state.message);
+
           }
         },
         builder: (context, state) {
-          if (state is ProfileLoading) {
+          if (state is ProfileLoadSuccess) {
+            hideOverlayLoader();
             return const Scaffold(
               body: AppFullScreenLoader(
                 message: 'Saving your profile...',

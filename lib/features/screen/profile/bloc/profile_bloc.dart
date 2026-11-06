@@ -2,6 +2,8 @@
 // Profile_bloc.dart
 // ═══════════════════════════════════════════
 
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:society360_app/features/screen/profile/bloc/profile_event.dart';
 import 'package:society360_app/features/screen/profile/bloc/profile_state.dart';
@@ -28,6 +30,7 @@ class ProfileBloc
     on<NextStepEvent>(_onNextStep);
     on<PreviousStepEvent>(_onPreviousStep);
     on<SubmitProfileEvent>(_onSubmit);
+    on<LoadProfileEvent>(_onLoadProfile);
   }
 
   void _onNextStep(
@@ -62,7 +65,7 @@ class ProfileBloc
       SubmitProfileEvent event,
       Emitter<ProfileState> emit) async {
 
-    emit(ProfileLoading());
+   /* emit(ProfileLoading());
 
     try {
       await _repository.saveProfile(event.data);
@@ -73,6 +76,31 @@ class ProfileBloc
       emit(ProfileFailure(
           e.toString()
               .replaceAll('Exception: ', '')));
+    }*/
+  }
+
+  FutureOr<void> _onLoadProfile(LoadProfileEvent event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoading());
+
+    try {
+      // 1. Await the asynchronous operation
+      final data = await _repository.getMyProfileByMobileNo(event.mobile);
+      print('data: $data');
+      // 2. Check if the handler is still active before emitting (prevents state leaks)
+     // if (emit.isDone) return;
+
+      if (data != null) {
+        emit(ProfileLoadSuccess(resident: data));
+      } else {
+        emit(ProfileLoadFailure('Profile not found'));
+      }
+    } catch (error) {
+      //if (emit.isDone) return;
+      print('Error: $error');
+      emit(ProfileLoadFailure(error.toString()));
     }
   }
+
+
+
 }

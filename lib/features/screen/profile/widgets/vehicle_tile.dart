@@ -72,7 +72,7 @@ class VehicleTile extends StatelessWidget {
             CrossAxisAlignment.start,
             children: [
               Text(
-                vehicle.make ?? _vehicleLabel,
+                vehicle.model ?? _vehicleLabel,
                 style: GoogleFonts.sora(
                   fontSize: 13,
                   fontWeight: FontWeight.w500,

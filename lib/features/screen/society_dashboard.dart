@@ -1,12 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:society360_app/core/shared/widgets/app_text_styles.dart';
+import 'package:society360_app/features/screen/profile/bloc/profile_bloc.dart';
+import 'package:society360_app/features/screen/profile/bloc/profile_event.dart';
 import '../../core/router/app_router.dart';
 import '../../core/shared/widgets/app_bar.dart';
 import '../../core/theme/AppColors.dart';
-
+import '../../injection.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:society360_app/features/screen/profile/bloc/profile_state.dart';
 class SocietyDashboard extends StatefulWidget {
-  const SocietyDashboard({super.key});
+  final String mobile;
+  final String role;
+
+  const SocietyDashboard({
+    super.key,
+    required this.mobile,
+    required this.role,
+  });
 
   @override
   State<SocietyDashboard> createState() => _SocietyDashboardState();
@@ -14,72 +25,88 @@ class SocietyDashboard extends StatefulWidget {
 
 class _SocietyDashboardState extends State<SocietyDashboard> {
   int _currentIndex = 0;
+  late final ProfileBloc _profileBloc;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-     backgroundColor: const Color(0xFF0D2C54),
-     /* appBar: AppBar(
-        backgroundColor: const Color(0xFF0D2C54),
-        title: const Text('DashBoard', style: TextStyle(color: Colors.white, fontSize: 18)),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => context.pop(),
-        ),
-      ),*/
+  void initState() {
+    super.initState();
+    _profileBloc = sl<ProfileBloc>()..add(LoadProfileEvent(widget.mobile));
+  }
 
-      appBar: CustomAppBars.customAppBar(
-        context: context,
-        title: 'DashBoard',
-      ),
-      /*appBar: AppBar(
-        title: const Text('DashBoard'),
-        // Force back button even if framework thinks there is no stack history
-        leading: context.canPop()
-            ? IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => context.pop(),
-        ): null,
-      ),*/
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(),
-              const SizedBox(height: 16),
-              _buildOverviewCards(),
-              const SizedBox(height: 24),
-              const Text(
-                'QUICK ACCESS',
-                style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.grey,
-                  letterSpacing: 1.2,
+
+  @override
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<ProfileBloc, ProfileState>(
+      //buildWhen: (previous, current) => previous.status != current.status,
+      bloc: _profileBloc,
+      builder: (context, state) {
+        if(state is ProfileLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+        if(state is ProfileLoadSuccess) {
+          print(state.resident?.fullName);
+          return Scaffold(
+            backgroundColor: const Color(0xFF0D2C54),
+            appBar: CustomAppBars.customAppBar(
+              context: context,
+              title: 'DashBoard',
+            ),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildHeader(),
+                    const SizedBox(height: 16),
+                    _buildOverviewCards(),
+                    const SizedBox(height: 24),
+                    const Text(
+                      'QUICK ACCESS',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildGridMenu(context),
+                  ],
                 ),
               ),
-              const SizedBox(height: 12),
-              _buildGridMenu(context),
-            ],
-          ),
-        ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) => setState(() => _currentIndex = index),
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Colors.white,
-        selectedItemColor: const Color(0xFF0D2C54),
-        unselectedItemColor: Colors.grey,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.receipt_long), label: 'Bills'),
-          BottomNavigationBarItem(icon: Icon(Icons. people), label: 'Visitors'),
-          BottomNavigationBarItem(icon: Icon(Icons.more_horiz), label: 'More'),
-        ],
-      ),
+            ),
+            bottomNavigationBar: BottomNavigationBar(
+              currentIndex: _currentIndex,
+              onTap: (index) => setState(() => _currentIndex = index),
+              type: BottomNavigationBarType.fixed,
+              backgroundColor: Colors.white,
+              selectedItemColor: const Color(0xFF0D2C54),
+              unselectedItemColor: Colors.grey,
+              items: const [
+                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.receipt_long),
+                  label: 'Bills',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.people),
+                  label: 'Visitors',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.more_horiz),
+                  label: 'More',
+                ),
+              ],
+            ),
+          );
+        }
+        if(state is ProfileLoadFailure){
+          return Center(child: Text(state.message));
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 
@@ -230,7 +257,7 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
                 print('Tapped on ${item['label']}');
                 switch (label) {
                   case 'Profile':
-                    context.push(AppRouter.Profile,
+                    context.push(AppRouter.profile,
                       extra: {
                         'mobile':       '8147574889',
                         'societyId':    'societyId',

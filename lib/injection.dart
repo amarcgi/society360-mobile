@@ -5,7 +5,7 @@
 import 'package:get_it/get_it.dart';
 
 import 'features/data/datsource/auth_remote_datasource.dart';
-import 'features/data/datsource/profile_remote_datasource.dart';
+
 import 'features/data/repositories/auth_repository.dart';
 import 'features/data/repositories/profile_repository.dart';
 import 'features/data/repositories/profile_repository_impl.dart';

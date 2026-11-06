@@ -1,13 +1,5 @@
-// lib/features/Profile/domain/repositories/
-//              profile_repository.dart
-
-
-
-
-
-
-
 import '../../screen/profile/models/profile_model.dart';
+
 
 abstract class ProfileRepository {
 
@@ -17,4 +9,6 @@ abstract class ProfileRepository {
   // POST /api/vehicles         → each vehicle
   // POST /api/family-members   → each family member
   Future<void> saveProfile(ProfileModel data);
+
+  Future<ProfileModel?> getMyProfileByMobileNo(String mobile);
 }

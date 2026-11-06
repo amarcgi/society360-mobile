@@ -40,7 +40,7 @@ dependencies:
   equatable: ^2.0.5       # value equality in BLoC
 
   #Google Fonts
-  google_fonts: ^5.0.0
+  google_fonts: ^6.2.0
 
 
   # ── HTTP Client ─────────────────────────────

@@ -2,7 +2,7 @@
 
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-
+import 'api_interceptor.dart';
 import '../constants/api_constants.dart';
 
 class ApiClient {
@@ -45,5 +45,6 @@ class ApiClient {
         },
       ),
     );
+    dio.interceptors.add(ApiLoggingInterceptor());
   }
 }

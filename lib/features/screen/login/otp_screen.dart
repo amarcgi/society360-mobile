@@ -7,6 +7,7 @@ import 'package:pinput/pinput.dart';
 import '../../../../../../core/theme/AppColors.dart';
 import '../../../../../../injection.dart';
 import '../../../core/router/app_router.dart';
+import '../../../core/shared/widgets/app_loader.dart';
 import 'bloc/auth_bloc.dart';
 import 'bloc/auth_event.dart';
 import 'bloc/auth_state.dart';
@@ -14,6 +15,7 @@ import 'package:go_router/go_router.dart';
 
 class OtpScreen extends StatefulWidget {
   final String mobile;
+  //decide on which screen this has to land, Resident, Society Admin or Security Guard
   final String role;
 
   const OtpScreen({
@@ -86,9 +88,20 @@ class _OtpScreenState extends State<OtpScreen>
       create: (_) => _authBloc,
       child: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is OtpVerifySuccess) {
+          if(state is OtpVerifyLoading){
+            showOverlayLoader(context,message:'Verifying OTP...');
+          }
+          else if (state is OtpVerifySuccess) {
+            hideOverlayLoader();
+            //context.push(AppRouter.dashboard);
 
-            context.push(AppRouter.dashboard);
+            context.go(
+              AppRouter.dashboard,
+              extra: {
+                'mobile':  widget.mobile,
+                'role':    widget.role
+              },
+            );
 
             /*context.go(
               AppRouter.Profile,
@@ -109,6 +122,7 @@ class _OtpScreenState extends State<OtpScreen>
             /*Navigator.pushNamedAndRemoveUntil(
                 context, '/home', (_) => false);*/
           } else if (state is OtpVerifyFailure) {
+            hideOverlayLoader();
             _showError(context, state.message);
             _otpController.clear();
           } else if (state is OtpResendSuccess) {
@@ -361,8 +375,7 @@ class _OtpScreenState extends State<OtpScreen>
     if (otp.length != 6) return;
     _authBloc.add(VerifyOtpEvent(
       mobile: widget.mobile,
-      otp: otp,
-      role: widget.role,
+      otp: otp
     ));
   }
 

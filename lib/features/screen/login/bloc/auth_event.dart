@@ -22,14 +22,12 @@ class RequestOtpEvent extends AuthEvent {
 class VerifyOtpEvent extends AuthEvent {
   final String mobile;
   final String otp;
-  final String role;
   const VerifyOtpEvent({
     required this.mobile,
     required this.otp,
-    required this.role,
   });
   @override
-  List<Object?> get props => [mobile, otp, role];
+  List<Object?> get props => [mobile, otp];
 }
 
 // Fired when user taps "Resend OTP"

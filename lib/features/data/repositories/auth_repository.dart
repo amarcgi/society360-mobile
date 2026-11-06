@@ -5,7 +5,7 @@ import '../model/otp_request_model.dart';
 abstract class AuthRepository {
   Future<void> requestOtp(String mobile);
   Future<LoginResponseModel> verifyOtp(
-      String mobile, String otp, String role);
+      String mobile, String otp);
 }
 class AuthRepositoryImpl implements AuthRepository {
 
@@ -21,14 +21,12 @@ class AuthRepositoryImpl implements AuthRepository {
 
   @override
   Future<LoginResponseModel> verifyOtp(
-      String mobile, String otp,
-      String role) async {
+      String mobile, String otp) async {
 
     final response = await _dataSource.verifyOtp(
       VerifyOtpModel(
         mobileNumber: mobile,
-        otp: otp,
-        role: role,
+        otp: otp
       ),
     );
 

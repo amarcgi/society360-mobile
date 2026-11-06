@@ -27,12 +27,15 @@ class ProfileStepState extends ProfileState {
 class ProfileLoading extends ProfileState {}
 
 // Backend call succeeded
-class ProfileSuccess extends ProfileState {}
+class ProfileLoadSuccess extends ProfileState {
+  final ProfileModel? resident;
+  const ProfileLoadSuccess({this.resident});
+}
 
 // Backend call failed
-class ProfileFailure extends ProfileState {
+class ProfileLoadFailure extends ProfileState {
   final String message;
-  const ProfileFailure(this.message);
+  const ProfileLoadFailure(this.message);
   @override List<Object?> get props => [message];
 }
 

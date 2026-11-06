@@ -72,7 +72,12 @@ class _LoginScreenState extends State<LoginScreen>
       create: (_) => _authBloc,
       child: BlocConsumer<AuthBloc, AuthState>(
         listener: (context, state) {
-          if (state is OtpRequestSuccess) {
+          if (state is OtpRequestLoading) {
+            showOverlayLoader(context,message:'Sending OTP...');
+          }
+
+          else if (state is OtpRequestSuccess) {
+            hideOverlayLoader();
             context.push(
               AppRouter.otp_screen,
               extra: {
@@ -88,6 +93,7 @@ class _LoginScreenState extends State<LoginScreen>
               )),
             );*/
           } else if (state is OtpRequestFailure) {
+            hideOverlayLoader();
             _showError(context, state.message);
           }
         },

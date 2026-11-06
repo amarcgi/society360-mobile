@@ -5,10 +5,24 @@ import 'package:equatable/equatable.dart';
 import '../models/profile_model.dart';
 
 
+
 abstract class ProfileEvent extends Equatable {
   const ProfileEvent();
   @override List<Object?> get props => [];
 }
+
+
+// profile_event.dart
+class LoadProfileEvent extends ProfileEvent {
+  final String mobile;
+  const LoadProfileEvent(this.mobile);
+
+  @override
+  List<Object?> get props => [mobile];
+}
+
+
+
 
 // Move to next step with updated data
 class NextStepEvent extends ProfileEvent {
