@@ -77,6 +77,18 @@ class ProfileBloc
           e.toString()
               .replaceAll('Exception: ', '')));
     }*/
+
+    try {
+      //await _repository.saveProfile(event.data);
+      // Mark Profile complete in storage
+      await SecureStorage.saveProfileDone('true');
+      emit(ProfileLoadSuccess(resident: event.data));
+    } catch (e) {
+      emit(ProfileLoadFailure(
+          e.toString()
+              .replaceAll('Exception: ', '')));
+    }
+
   }
 
   FutureOr<void> _onLoadProfile(LoadProfileEvent event, Emitter<ProfileState> emit) async {
@@ -89,11 +101,19 @@ class ProfileBloc
       // 2. Check if the handler is still active before emitting (prevents state leaks)
      // if (emit.isDone) return;
 
-      if (data != null) {
+      /*if (data != null) {
         emit(ProfileLoadSuccess(resident: data));
+
+      } else {
+        emit(ProfileLoadFailure('Profile not found'));
+      }*/
+      if (data != null) {
+        emit(ProfileStepState(step: 1, data: data));
       } else {
         emit(ProfileLoadFailure('Profile not found'));
       }
+
+
     } catch (error) {
       //if (emit.isDone) return;
       print('Error: $error');

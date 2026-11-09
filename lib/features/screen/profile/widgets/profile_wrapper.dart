@@ -15,6 +15,7 @@ import '../../../../injection.dart';
 import '../bloc/profile_bloc.dart';
 import '../bloc/profile_event.dart';
 import '../bloc/profile_state.dart';
+import '../models/profile_model.dart';
 import 'step1_personal_screen.dart';
 import 'step2_flat_screen.dart';
 import 'step3_family_screen.dart';
@@ -48,35 +49,31 @@ class ProfileWrapper extends StatefulWidget {
 class _ProfileWrapperState
     extends State<ProfileWrapper> {
 
-  late final ProfileBloc _bloc;
+  late final ProfileBloc _profileBloc;
+  ProfileModel? profileModel;
 
   @override
   void initState() {
     super.initState();
-    _bloc = sl<ProfileBloc>()..add(LoadProfileEvent(widget.mobile));
+    _profileBloc = sl<ProfileBloc>()..add(LoadProfileEvent(widget.mobile));
   }
 
   @override
   void dispose() {
-    _bloc.close();
+    _profileBloc.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _bloc,
+    /*return BlocProvider.value(
+      value: _profileBloc,
       child: BlocConsumer<ProfileBloc,
           ProfileState>(
-        bloc: _bloc,
+        bloc: _profileBloc,
         listener: (context, state) {
           if(state is ProfileLoading){
             showOverlayLoader(context,message:'Loading profile...');
-          }
-          else if (state is ProfileLoadSuccess) {
-            hideOverlayLoader();
-            // ✅ Navigate to home
-            //Nav.goHome(context);
           }
           if (state is ProfileLoadFailure) {
             print('object: ${state.message}');
@@ -92,21 +89,61 @@ class _ProfileWrapperState
           }
         },
         builder: (context, state) {
-          if (state is ProfileLoadSuccess) {
-            hideOverlayLoader();
-            return const Scaffold(
+         // if (state is ProfileLoadSuccess) {
+           // hideOverlayLoader();
+            *//*return const Scaffold(
               body: AppFullScreenLoader(
                 message: 'Saving your profile...',
               ),
-            );
-          }
-
+            );*//*
+           *//* return _buildStep(
+              context,
+              ProfileStepState(step: 1, data: state.resident!),
+            );*//*
+         // }
+          print('state is ProfileStepState: ${state is ProfileStepState}');
+          //hideOverlayLoader();
           if (state is ProfileStepState) {
+            hideOverlayLoader();
             return _buildStep(
                 context, state);
           }
 
           return const SizedBox.shrink();
+        },
+      ),
+    );*/
+    return BlocProvider.value(
+      value: _profileBloc,
+      child: BlocConsumer<ProfileBloc, ProfileState>(
+        listener: (context, state) {
+          if (state is ProfileLoadFailure) {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRouter.dashboard);
+            }
+            AppSnackbar.error(context, state.message);
+          }
+          if (state is ProfileLoadSuccess) {
+            if (state.resident != null) {
+              context.go(AppRouter.dashboard,extra: state.resident!.toJson());
+            }
+          }
+        },
+        builder: (context, state) {
+          if (state is ProfileStepState) {
+            return _buildStep(context, state);
+          }
+
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: CustomAppBars.customAppBar(
+              context: context,
+              title: 'Profile Setup',
+            ),
+            body: const Center(child: CircularProgressIndicator()),
+          );
         },
       ),
     );

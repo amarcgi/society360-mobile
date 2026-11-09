@@ -11,6 +11,7 @@ import '../../../../core/shared/widgets/app_text_field.dart';
 import '../../../../core/theme/AppColors.dart';
 
 
+import '../../../../injection.dart';
 import '../bloc/profile_bloc.dart';
 import '../bloc/profile_event.dart';
 import '../models/profile_model.dart';
@@ -45,6 +46,7 @@ class _Step1State
       text: widget.data.emergencyContactName ?? '');
   late final _ecMobCtrl = TextEditingController(
       text: widget.data.emergencyContactMobile ?? '');
+
 
   @override
   void dispose() {
@@ -263,8 +265,11 @@ class _Step1State
           ? null : _ecMobCtrl.text.trim(),
     );
 
-    context.read<ProfileBloc>()
-        .add(NextStepEvent(updated));
+   /* context.read<ProfileBloc>()
+        .add(NextStepEvent(updated));*/
+    print('updated: $updated');
+    context.read<ProfileBloc>().add(NextStepEvent(updated));
+
   }
 
   String _monthName(int m) =>

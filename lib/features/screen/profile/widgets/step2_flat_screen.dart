@@ -150,13 +150,13 @@ class _Step2State extends State<Step2FlatScreen> {
                     Icons.arrow_forward_rounded,
                     onPressed: _onContinue,
                   ),
-                  /*const Gap(8),
+                  const Gap(8),
                   AppButton.outline(
                     label: 'Back',
                     onPressed: () => context
                         .read<ProfileBloc>()
                         .add(PreviousStepEvent()),
-                  ),*/
+                  ),
                   const Gap(16),
                 ],
               ),

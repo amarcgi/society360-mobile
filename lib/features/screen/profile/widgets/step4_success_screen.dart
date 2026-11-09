@@ -71,7 +71,7 @@ class Step4SuccessScreen extends StatelessWidget {
                 ),
                 const Gap(8),
                 Text(
-                  'Your profile has been created.'
+                  'Your profile will be created.'
                       ' Here is a summary.',
                   style: GoogleFonts.sora(
                     fontSize: 13,
@@ -177,7 +177,7 @@ class Step4SuccessScreen extends StatelessWidget {
                   label: 'Save',
                   suffixIcon: Icons.save,
                   onPressed: () {
-                    /*print('=== Profile Data ===');
+                    print('=== Profile Data ===');
                     print('Full Name: ${data.fullName}');
                     print('Building: $buildingName');
                     print('Flat Number: $flatNumber');
@@ -191,8 +191,8 @@ class Step4SuccessScreen extends StatelessWidget {
                     for (var vehicle in data.vehicles) {
                       print('  - ${vehicle.vehicleNumber} (${vehicle.vehicleType})');
                     }
-                    print('==================');*/
-                    //context.read<ProfileBloc>().add(SubmitProfileEvent(data));
+                    print('==================');
+                    context.read<ProfileBloc>().add(SubmitProfileEvent(data));
                   },
                 ),
                 const Gap(8),

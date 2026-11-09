@@ -28,6 +28,8 @@ class ApiConstants {
 
   //profile endpoints
   static const String profile =
-      '/api/residents/me';
+      '/api/residents/me/';
+  //DashBaord
+  static const String dashBoard = '/api/resident_dashboard/';
 
 }

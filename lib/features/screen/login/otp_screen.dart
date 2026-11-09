@@ -95,7 +95,7 @@ class _OtpScreenState extends State<OtpScreen>
             hideOverlayLoader();
             //context.push(AppRouter.dashboard);
 
-            context.go(
+            context.push(
               AppRouter.dashboard,
               extra: {
                 'mobile':  widget.mobile,

@@ -10,8 +10,9 @@ import '../../features/screen/complain/raise_complaint_form_screen.dart';
 import '../../features/screen/login/login_screen.dart';
 import '../../features/screen/login/otp_screen.dart';
 import '../../features/screen/polls/polls_screen.dart';
+import '../../features/screen/profile/models/profile_model.dart';
 import '../../features/screen/profile/widgets/profile_wrapper.dart';
-import '../../features/screen/society_dashboard.dart';
+import '../../features/screen/dashboard/society_dashboard.dart';
 import '../../features/screen/splash/splash_screen.dart';
 import '../../features/screen/visitors/add_visitor_screen.dart';
 import '../../features/screen/visitors/gate_approval_screen.dart';
@@ -49,10 +50,10 @@ class AppRouter {
       GoRoute(
         path: dashboard,
         builder: (context, state) {
-          final extra = state.extra as Map<String, String>;
+          final extra = state.extra as Map<String, dynamic>;
           return SocietyDashboard(
             mobile: extra['mobile']!,
-            role: extra['role']!,
+            role: extra['role']??'',
           );
         }
       ),
@@ -113,16 +114,16 @@ class AppRouter {
       GoRoute(
         path: AppRouter.profile,
         builder: (_, state) {
-          final extra = state.extra
-          as Map<String, String>;
+          final extra = state.extra as Map<String, dynamic>;
+          String value(String key)=>extra[key]?.toString()??'';
           return ProfileWrapper(
-            mobile:       extra['mobile']!,
-            societyId:    extra['societyId']!,
-            buildingId:   extra['buildingId']!,
-            flatId:       extra['flatId']!,
-            flatNumber:   extra['flatNumber']!,
-            buildingName: extra['buildingName']!,
-            societyName:  extra['societyName']!,
+            mobile: value('mobile'),
+            societyId: value('societyId'),
+            buildingId: value('buildingId'),
+            flatId: value('flatId'),
+            flatNumber: value('flatNumber'),
+            buildingName: value('buildingName'),
+            societyName: value('societyName'),
           );
         },
       ),

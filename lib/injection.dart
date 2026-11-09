@@ -9,6 +9,7 @@ import 'features/data/datsource/auth_remote_datasource.dart';
 import 'features/data/repositories/auth_repository.dart';
 import 'features/data/repositories/profile_repository.dart';
 import 'features/data/repositories/profile_repository_impl.dart';
+import 'features/screen/dashboard/bloc/society_dashboard_bloc.dart';
 import 'features/screen/login/bloc/auth_bloc.dart';
 import 'features/screen/profile/bloc/profile_bloc.dart';
 import 'features/screen/profile/widgets/save_profile_usecase.dart';
@@ -49,5 +50,7 @@ Future<void> initDependencies() async {
   /*sl.registerLazySingleton<ProfileRemoteDataSource>(
           () => ProfileRemoteDataSourceImpl());*/
 
+  //SocietyDashboardBloc
+  sl.registerFactory(() => SocietyDashboardBloc());
 
 }
