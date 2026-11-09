@@ -87,7 +87,11 @@ class AppRouter {
       ),
       GoRoute(
         path: complain_dashboard,
-        builder: (context, state) => const ComplaintsDashboardScreen(key: ValueKey('Complaints-DashboardScreen-screen')),
+        builder: (context, state) {
+          final extra = state.extra as Map<String, dynamic>;
+          return const ComplaintsDashboardScreen(key: ValueKey('Complaints-DashboardScreen-screen'));
+        },
+
       ),
       GoRoute(
         path: raiseComplain,

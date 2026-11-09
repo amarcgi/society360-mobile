@@ -38,6 +38,7 @@ class _RaiseComplaintFormScreenState extends State<RaiseComplaintFormScreen> {
     {'id': 3, 'name': 'Lift Maintenance'},
     {'id': 4, 'name': 'Water Provision'},
     {'id': 5, 'name': 'Security'},
+    {'id': 6, 'name': 'Other'},
   ];
 
   // Triggers native platform system explorer to select files

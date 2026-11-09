@@ -28,6 +28,7 @@ class _ComplaintsDashboardScreenState extends State<ComplaintsDashboardScreen> w
     {'id': 3, 'name': 'Lift Maintenance'},
     {'id': 4, 'name': 'Water Provision'},
     {'id': 5, 'name': 'Security'},
+    {'id': 6, 'name': 'Other'},
   ];
 
   // Mock records updated with specific flatId maps matching structural selectors

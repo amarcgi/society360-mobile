@@ -35,12 +35,32 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
   int _currentIndex = 0;
     SocietyDashBoardDetails? _societyDashBoardDetails;
   SocietyDashboardBloc? _societyDashboardBloc;
+// Using literals
+  Map<String, dynamic> dashBoardDetailAsMap = {};
 
   @override
   void initState() {
     super.initState();
     _societyDashboardBloc = sl<SocietyDashboardBloc>()..add(LoadSocietyDashboard(widget.mobile));
+    dashBoardDetailAsMap = {
+            'mobile':       widget.mobile,
+            'societyId':    _societyDashBoardDetails?.societyId,
+            'buildingId':   _societyDashBoardDetails?.buildingId,
+            'flatId':       _societyDashBoardDetails?.flatId,
+            'flatNumber':   _societyDashBoardDetails?.flatNo,
+            'buildingName': _societyDashBoardDetails?.buildingName,
+            'societyName':  _societyDashBoardDetails?.societyName,
+        };
   }
+
+
+
+  @override
+  void dispose() {
+    _societyDashboardBloc?.close();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -271,37 +291,29 @@ class _SocietyDashboardState extends State<SocietyDashboard> {
                 switch (label) {
                   case 'Profile':
                     context.push(AppRouter.profile,
-                      extra: {
-                        'mobile':       widget.mobile,
-                        'societyId':    _societyDashBoardDetails?.societyId,
-                        'buildingId':   _societyDashBoardDetails?.buildingId,
-                        'flatId':       _societyDashBoardDetails?.flatId,
-                        'flatNumber':   _societyDashBoardDetails?.flatNo,
-                        'buildingName': _societyDashBoardDetails?.buildingName,
-                        'societyName':  _societyDashBoardDetails?.societyName,
-                      },
+                      extra: dashBoardDetailAsMap,
                     );
                     break;
                   case 'Visitors':
-                    context.push(AppRouter.addVisitor);
+                    context.push(AppRouter.addVisitor, extra: dashBoardDetailAsMap);
                     break; // Optional in modern Dart for regular code blocks, but good practice
                   case 'Complaints':
-                    context.push(AppRouter.complain_dashboard);
+                    context.push(AppRouter.complain_dashboard,extra: dashBoardDetailAsMap);
                     break; // Optional in modern Dart for regular code blocks, but good practice
                   case 'Accounting':
-                    context.push(AppRouter.accounting);
+                    context.push(AppRouter.accounting,extra: dashBoardDetailAsMap);
                     break;
                   case 'Polling':
-                    context.push(AppRouter.pollsVoting);
+                    context.push(AppRouter.pollsVoting,extra: dashBoardDetailAsMap);
                     break;
                   case 'rejected':
                     print('Application denied.');
                     break;
                   case 'Amenities':
-                    context.push(AppRouter.amenitiesScreen);
+                    context.push(AppRouter.amenitiesScreen,extra: dashBoardDetailAsMap);
                     break;
                   case 'Announcements':
-                    context.push(AppRouter.announcementsScreen);
+                    context.push(AppRouter.announcementsScreen,extra: dashBoardDetailAsMap);
                     break;
 
 

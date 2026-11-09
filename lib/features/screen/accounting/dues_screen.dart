@@ -82,7 +82,7 @@ class _DuesScreenState extends State<DuesScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 16),
+          //const SizedBox(height: 16),
 
           // Select All / Deselect All Header Row
           Padding(
@@ -116,7 +116,7 @@ class _DuesScreenState extends State<DuesScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 8),
+          //const SizedBox(height: 8),
 
           // Invoice List with Checkboxes
           ...state.invoices.asMap().entries.map((entry) {
@@ -125,7 +125,7 @@ class _DuesScreenState extends State<DuesScreen> {
             final isSelected = _selectedIndices.contains(index);
 
             return Card(
-              margin: const EdgeInsets.only(bottom: 12),
+              margin: const EdgeInsets.only(bottom: 10),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
