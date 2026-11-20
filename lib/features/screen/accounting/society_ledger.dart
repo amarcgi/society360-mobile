@@ -2,9 +2,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'bloc/accounting_bloc.dart';
 import 'model/society_expense_Item.dart';
 class ExpensesScreen extends StatefulWidget {
-  const ExpensesScreen({super.key});
+  final AccountingBloc accountingBloc;
+  const ExpensesScreen({super.key, required this.accountingBloc});
   @override
   State<ExpensesScreen> createState() => _ExpensesScreenState();
 }

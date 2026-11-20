@@ -3,13 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/constants/api_constants.dart';
 import '../../../../core/network/api_client.dart';
+import '../model/society_dashboard_details_store.dart';
 import '../model/society_dashboard_response.dart';
 import 'society_dashboard_event.dart';
 import 'society_dashboard_state.dart';
 
 class SocietyDashboardBloc
     extends Bloc<SocietyDashboardEvent, SocietyDashboardState> {
-  SocietyDashboardBloc() : super(const SocietyDashboardInitial()) {
+  final SocietyDashboardDetailsStore _detailsStore;
+  SocietyDashboardBloc(this._detailsStore) : super(const SocietyDashboardInitial()) {
     on<LoadSocietyDashboard>(_onLoadDashboard);
   }
 
@@ -31,13 +33,12 @@ class SocietyDashboardBloc
         );
       }
 
-      emit(
-        SocietyDashboardLoaded(
-          SocietyDashBoardDetails.fromJson(
-            Map<String, dynamic>.from(data),
-          ),
-        ),
+      // In _onLoadDashboard, after parsing the response:
+      final details = SocietyDashBoardDetails.fromJson(
+        Map<String, dynamic>.from(data),
       );
+      _detailsStore.save(details);
+      emit(SocietyDashboardLoaded(details));
     } on DioException catch (error) {
       final responseData = error.response?.data;
       final message = responseData is Map

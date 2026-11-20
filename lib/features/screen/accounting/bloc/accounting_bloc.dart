@@ -1,33 +1,45 @@
-import 'package:bloc/bloc.dart';
+import 'package:dio/dio.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../model/invoice_Item.dart';
+import '../../../data/repositories/accounting_repository_impl.dart';
 import 'accounting_event.dart';
+import 'accounting_state.dart';
 
 class AccountingBloc extends Bloc<AccountingEvent, AccountingState> {
-  AccountingBloc() : super(AccountingState([])) {
-    on<LoadAccounting>((event, emit) {
-      emit(AccountingState([
-        InvoiceItem(title: "Water Charges", status: "Overdue", amount: 1700, dueDate: DateTime(2026, 5, 31), description: "Water Bill charges for APartment and Fine indtroduced against ur flat.", invoiceNo: "INV-001", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee against Maintenance.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "PAID", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
-        InvoiceItem(title: "Maintenance", status: "Pending", amount: 2500, dueDate: DateTime(2026, 6, 5), description: "Monthly fee.", invoiceNo: "INV-002", flatNo: "301", buildingNo: "B"),
+  final AccountingRepository _repository;
 
+  AccountingBloc(this._repository)
+      : super(const AccountingState()) {
+    on<LoadAccounting>(_onLoadAccounting);
+  }
 
-      ]));
-    });
+  Future<void> _onLoadAccounting(
+      LoadAccounting event,
+      Emitter<AccountingState> emit,
+      ) async {
+    emit(state.copyWith(status: AccountingStatus.loading));
+
+    try {
+      final invoices = await _repository.getInvoices(flatId: event.flatId, societyId: event.societyId, buildingId: event.buildingId, mobileNo: event.mobileNo);
+      emit(AccountingState(
+        status: AccountingStatus.success,
+        invoices: invoices,
+      ));
+    } on DioException catch (error) {
+      final response = error.response?.data;
+      final message = response is Map
+          ? response['message']?.toString()
+          : null;
+
+      emit(AccountingState(
+        status: AccountingStatus.failure,
+        errorMessage: message ?? error.message ?? 'Failed to load invoices',
+      ));
+    } on FormatException catch (error) {
+      emit(AccountingState(
+        status: AccountingStatus.failure,
+        errorMessage: error.message,
+      ));
+    }
   }
 }

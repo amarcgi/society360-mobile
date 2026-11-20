@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import 'bloc/accounting_bloc.dart';
 import 'model/transaction_Item.dart';
 class StatementScreen extends StatefulWidget {
-  const StatementScreen({super.key});
+  final AccountingBloc accountingBloc;
+  const StatementScreen({super.key, required this.accountingBloc});
   @override
   State<StatementScreen> createState() => _StatementScreenState();
 }

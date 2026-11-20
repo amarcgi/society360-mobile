@@ -99,7 +99,10 @@ class AppRouter {
       ),
       GoRoute(
         path: accounting,
-        builder: (context, state) => const AccountingMainScreen(key: ValueKey('raise_complain')),
+        builder: (context, state) {
+          //final extra = state.extra as Map<String, dynamic>;
+          return const AccountingMainScreen(key: ValueKey('raise_complain'));
+        }
       ),
       GoRoute(
         path: amenitiesScreen,
