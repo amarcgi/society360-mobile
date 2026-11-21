@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import '../../features/screen/accounting/accounting_mainScreen.dart';
+import '../../features/screen/accounting/model/payment_checkout_args.dart';
+import '../../features/screen/accounting/payment_checkout_screen.dart';
 import '../../features/screen/amenities/amenities.dart';
 import '../../features/screen/announcemnet/announcement_detailScreen.dart';
 import '../../features/screen/announcemnet/announcements_screen.dart';
@@ -41,6 +43,7 @@ class AppRouter {
 
   static const String  announcementsScreen= '/announcements';
   static const String  announcementDetailScreen= '/announcementDetail';
+  static const String  paymentCheckoutScreen= '/payment-checkout';
 
 
   static final GoRouter router = GoRouter(
@@ -98,12 +101,33 @@ class AppRouter {
         builder: (context, state) => const RaiseComplaintFormScreen(key: ValueKey('raise_complain')),
       ),
       GoRoute(
+        path: paymentCheckoutScreen,
+        name: 'paymentCheckout',
+        builder: (context, state) {
+          final args = state.extra;
+          if (args is! PaymentCheckoutArgs) {
+            return const Scaffold(
+              body: Center(child: Text('Invalid payment checkout parameters')),
+            );
+          }
+
+          return PaymentCheckoutScreen(
+            payableAmount: args.payableAmount,
+            isPartial: args.isPartial,
+            invoices: args.invoices,
+            gatewayFeePercentage: args.gatewayFeePercentage,
+            onPaymentConfirm: args.onPaymentConfirm,
+          );
+        },
+      ),
+      GoRoute(
         path: accounting,
         builder: (context, state) {
           //final extra = state.extra as Map<String, dynamic>;
           return const AccountingMainScreen(key: ValueKey('raise_complain'));
         }
       ),
+
       GoRoute(
         path: amenitiesScreen,
         builder: (context, state) => const AmenitiesScreen(key: ValueKey('amenities_screen')),

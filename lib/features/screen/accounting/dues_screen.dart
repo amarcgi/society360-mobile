@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:society360_app/features/screen/accounting/payment_checkout_screen.dart';
 
 import '../../../core/theme/AppColors.dart';
 import 'bloc/accounting_bloc.dart';
@@ -8,6 +9,8 @@ import 'bloc/accounting_event.dart';
 import 'bloc/accounting_state.dart';
 import 'model/invoice_Item.dart';
 import 'package:go_router/go_router.dart';
+
+import 'model/payment_checkout_args.dart';
 
 class DuesScreen extends StatefulWidget {
   final AccountingBloc accountingBloc;
@@ -408,16 +411,35 @@ class _DuesScreenState extends State<DuesScreen> {
     });
   }
 
-  void _onProceedPayment({
+  Future<void> _onProceedPayment({
     required double amount,
     required bool isPartial,
     required List<InvoiceItem> invoices,
-  }) {
-    // TODO: Dispatch payment event to AccountingBloc or open payment gateway
-    // e.g. widget.accountingBloc.add(PayInvoicesEvent(amount: amount, isPartial: isPartial, invoices: invoices));
-    print(
-      'Payment -> Amount: ₹${amount.toStringAsFixed(2)}, Partial: $isPartial, Invoices: ${invoices.length}',
+  }) async {
+    if (!mounted) return;
+
+    final result = await context.push<PaymentCheckoutResult>(
+      '/payment-checkout', // or AppRouter.paymentCheckout
+      extra: PaymentCheckoutArgs(
+        payableAmount: amount,
+        isPartial: isPartial,
+        invoices: invoices,
+        onPaymentConfirm: (checkoutResult) {
+          // TODO: Dispatch event to AccountingBloc
+          // widget.accountingBloc.add(SubmitPaymentEvent(checkoutResult));
+          debugPrint(
+            'Confirmed -> Total: ₹${checkoutResult.finalTotal.toStringAsFixed(2)}, '
+                'Method: ${checkoutResult.method.name}, Ref: ${checkoutResult.paymentReference}, '
+                'Partial: ${checkoutResult.isPartial}',
+          );
+        },
+      ),
     );
+
+    if (result != null && mounted) {
+      // Optional: refresh dues / clear selection or show confirmation
+      debugPrint('Returned from checkout with ref: ${result.paymentReference}');
+    }
   }
 
   void _showInvoiceDetails(BuildContext context, InvoiceItem item) {
