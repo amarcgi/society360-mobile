@@ -20,7 +20,7 @@ class AccountingBloc extends Bloc<AccountingEvent, AccountingState> {
     emit(state.copyWith(status: AccountingStatus.loading));
 
     try {
-      final invoices = await _repository.getInvoices(flatId: event.flatId, societyId: event.societyId, buildingId: event.buildingId, mobileNo: event.mobileNo);
+      final invoices = await _repository.getInvoices(flatId: event.flatId, societyId: event.societyId, buildingId: event.buildingId);
       emit(AccountingState(
         status: AccountingStatus.success,
         invoices: invoices,

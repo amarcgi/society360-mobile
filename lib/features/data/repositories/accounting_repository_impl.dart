@@ -6,7 +6,7 @@ import '../../screen/accounting/model/invoice_Item.dart';
 
 
 abstract class AccountingRepository {
-  Future<List<InvoiceItem>> getInvoices({required flatId,required societyId,required buildingId,required mobileNo});
+  Future<List<InvoiceItem>> getInvoices({required flatId,required societyId,required buildingId});
 }
 
 class AccountingRepositoryImpl implements AccountingRepository {
@@ -15,12 +15,11 @@ class AccountingRepositoryImpl implements AccountingRepository {
   AccountingRepositoryImpl() : _dio = ApiClient().dio;
 
   @override
-  Future<List<InvoiceItem>> getInvoices({required flatId,required societyId,required buildingId,required mobileNo}) async {
+  Future<List<InvoiceItem>> getInvoices({required flatId,required societyId,required buildingId}) async {
     final path = '${ApiConstants.invoices}'
         '/society/${Uri.encodeComponent(societyId.toString())}'
-        '/flat/${Uri.encodeComponent(flatId.toString())}'
         '/building/${Uri.encodeComponent(buildingId.toString())}'
-        '/mobileNo/${Uri.encodeComponent(mobileNo)}';
+        '/flat/${Uri.encodeComponent(flatId.toString())}' ;
 
     final response = await _dio.get(path);
 

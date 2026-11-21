@@ -1,5 +1,5 @@
 class InvoiceItem {
-  final double amount;
+  final double dueAmount;
   final String billingMonth;
   final int buildingId;
   final DateTime? createdAt;
@@ -10,13 +10,16 @@ class InvoiceItem {
   final String invoiceNumber;
   final DateTime? paidAt;
   final double penaltyAmount;
+  final String? penaltyReason;
   final String societyId;
   final String status;
   final double totalAmount;
+  final double paidAmount;
+  final double balanceAmount;
   final String type;
 
   const InvoiceItem({
-    required this.amount,
+    required this.dueAmount,
     required this.billingMonth,
     required this.buildingId,
     this.createdAt,
@@ -27,9 +30,12 @@ class InvoiceItem {
     required this.invoiceNumber,
     this.paidAt,
     required this.penaltyAmount,
+    this.penaltyReason,
     required this.societyId,
     required this.status,
     required this.totalAmount,
+    required this.paidAmount,
+    required this.balanceAmount,
     required this.type,
   });
 
@@ -85,7 +91,7 @@ class InvoiceItem {
     }
 
     return InvoiceItem(
-      amount: readDouble('amount'),
+      dueAmount: readDouble('dueAmount'),
       billingMonth: json['billingMonth']?.toString() ?? '',
       buildingId: readInt('buildingId'),
       createdAt: readOptionalDate('createdAt'),
@@ -96,15 +102,18 @@ class InvoiceItem {
       invoiceNumber: json['invoiceNumber']?.toString() ?? '',
       paidAt: readOptionalDate('paidAt'),
       penaltyAmount: readDouble('penaltyAmount'),
+      penaltyReason: json['penaltyReason']?.toString() ?? '',
       societyId: json['societyId']?.toString() ?? '',
       status: json['status']?.toString() ?? '',
       totalAmount: readDouble('totalAmount'),
       type: json['type']?.toString() ?? '',
+      paidAmount: readDouble('paidAmount'),
+      balanceAmount: readDouble('balanceAmount'),
     );
   }
 
   Map<String, dynamic> toJson() => {
-    'amount': amount,
+    'dueAmount': dueAmount,
     'billingMonth': billingMonth,
     'buildingId': buildingId,
     'createdAt': createdAt?.toIso8601String(),
@@ -115,9 +124,12 @@ class InvoiceItem {
     'invoiceNumber': invoiceNumber,
     'paidAt': paidAt?.toIso8601String(),
     'penaltyAmount': penaltyAmount,
+    'penaltyReason': penaltyReason,
     'societyId': societyId,
     'status': status,
     'totalAmount': totalAmount,
     'type': type,
+    'paidAmount': paidAmount,
+    'balanceAmount': balanceAmount,
   };
 }

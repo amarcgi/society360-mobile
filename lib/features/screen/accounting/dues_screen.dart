@@ -25,33 +25,32 @@ class _DuesScreenState extends State<DuesScreen> {
   // Track selected invoice indices
   Set<int> _selectedIndices = {};
   bool _isInitialized = false;
-  late AccountingBloc _accountingBloc;
-
-
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<AccountingBloc, AccountingState>(
       bloc: widget.accountingBloc,
       builder: (context, state) {
-        // Existing UI
+        print('state.invoices.length: ${state.invoices.length}');
+
         // Automatically select all items on initial load
         if (!_isInitialized && state.invoices.isNotEmpty) {
           _selectedIndices = Set.from(List.generate(state.invoices.length, (index) => index));
           _isInitialized = true;
         }
 
-        final bool isAllSelected = state.invoices.isNotEmpty && _selectedIndices.length == state.invoices.length;
+        final bool isAllSelected =
+            state.invoices.isNotEmpty && _selectedIndices.length == state.invoices.length;
 
         // Calculate total amount based ONLY on selected items
         double totalSelectedAmount = 0.0;
+        final List<InvoiceItem> selectedInvoices = [];
         for (int i = 0; i < state.invoices.length; i++) {
           if (_selectedIndices.contains(i)) {
-            totalSelectedAmount += state.invoices[i].amount;
+            totalSelectedAmount += state.invoices[i].dueAmount;
+            selectedInvoices.add(state.invoices[i]);
           }
         }
-
-
 
         return ListView(
           padding: const EdgeInsets.all(16),
@@ -71,7 +70,7 @@ class _DuesScreenState extends State<DuesScreen> {
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    "₹$totalSelectedAmount",
+                    "₹${totalSelectedAmount.toStringAsFixed(2)}",
                     style: const TextStyle(color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
@@ -79,7 +78,12 @@ class _DuesScreenState extends State<DuesScreen> {
                     onPressed: _selectedIndices.isEmpty
                         ? null
                         : () {
-                      // TODO: Trigger payment gateway for selected invoices
+                      // TODO: Trigger full payment for selected invoices
+                      _onProceedPayment(
+                        amount: totalSelectedAmount,
+                        isPartial: false,
+                        invoices: selectedInvoices,
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color(0xFF00C2CB),
@@ -89,14 +93,38 @@ class _DuesScreenState extends State<DuesScreen> {
                     child: Text(
                       _selectedIndices.isEmpty
                           ? "SELECT ITEMS TO PAY"
-                          : "PAY SELECTED (${_selectedIndices.length}) - ₹$totalSelectedAmount",
+                          : "PAY SELECTED (${_selectedIndices.length}) - ₹${totalSelectedAmount.toStringAsFixed(2)}",
                       style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
                     ),
                   ),
+                  if (_selectedIndices.isNotEmpty && totalSelectedAmount > 0) ...[
+                    const SizedBox(height: 10),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 44,
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showPartialPaymentSheet(
+                          context: context,
+                          title: 'Pay Partial (${_selectedIndices.length} Selected)',
+                          maxAmount: totalSelectedAmount,
+                          invoices: selectedInvoices,
+                        ),
+                        icon: const Icon(Icons.pie_chart_outline, size: 18),
+                        label: const Text(
+                          "PAY PARTIAL AMOUNT",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.white,
+                          side: const BorderSide(color: Color(0xFF00C2CB)),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
               ),
             ),
-            //const SizedBox(height: 16),
 
             // Select All / Deselect All Header Row
             Padding(
@@ -114,7 +142,9 @@ class _DuesScreenState extends State<DuesScreen> {
                         if (isAllSelected) {
                           _selectedIndices.clear(); // Deselect all
                         } else {
-                          _selectedIndices = Set.from(List.generate(state.invoices.length, (index) => index)); // Select all
+                          _selectedIndices = Set.from(
+                            List.generate(state.invoices.length, (index) => index),
+                          ); // Select all
                         }
                       });
                     },
@@ -130,7 +160,6 @@ class _DuesScreenState extends State<DuesScreen> {
                 ],
               ),
             ),
-            //const SizedBox(height: 8),
 
             // Invoice List with Checkboxes
             ...state.invoices.asMap().entries.map((entry) {
@@ -177,7 +206,7 @@ class _DuesScreenState extends State<DuesScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "₹${inv.amount}",
+                            "₹${inv.dueAmount}",
                             style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 4),
@@ -224,8 +253,171 @@ class _DuesScreenState extends State<DuesScreen> {
         );
       },
     );
+  }
 
+  void _showPartialPaymentSheet({
+    required BuildContext context,
+    required String title,
+    required double maxAmount,
+    required List<InvoiceItem> invoices,
+  }) {
+    final TextEditingController amountController = TextEditingController(
+      text: (maxAmount / 2).toStringAsFixed(0),
+    );
+    String? errorText;
 
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) => StatefulBuilder(
+        builder: (sheetContext, setSheetState) {
+          void applyPercentage(double fraction) {
+            final calculated = (maxAmount * fraction);
+            amountController.text = calculated.toStringAsFixed(2);
+            setSheetState(() => errorText = null);
+          }
+
+          void submitPartial() {
+            final parsed = double.tryParse(amountController.text.trim());
+            if (parsed == null || parsed <= 0) {
+              setSheetState(() => errorText = 'Enter a valid amount greater than ₹0');
+              return;
+            }
+            if (parsed > maxAmount) {
+              setSheetState(
+                    () => errorText = 'Amount cannot exceed ₹${maxAmount.toStringAsFixed(2)}',
+              );
+              return;
+            }
+            Navigator.pop(ctx);
+            _onProceedPayment(
+              amount: parsed,
+              isPartial: parsed < maxAmount,
+              invoices: invoices,
+            );
+          }
+
+          return SafeArea(
+            child: Container(
+              decoration: const BoxDecoration(
+                color: AppColors.background,
+                borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
+              ),
+              padding: EdgeInsets.fromLTRB(
+                20,
+                14,
+                20,
+                20 + MediaQuery.of(ctx).viewInsets.bottom,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Center(
+                      child: Container(
+                        width: 42,
+                        height: 4,
+                        decoration: BoxDecoration(
+                          color: AppColors.border,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 18),
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        color: AppColors.textPrimary,
+                        fontSize: 19,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Maximum payable: ₹${maxAmount.toStringAsFixed(2)}',
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: amountController,
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      autofocus: true,
+                      decoration: InputDecoration(
+                        labelText: 'Enter Amount (₹)',
+                        prefixText: '₹ ',
+                        errorText: errorText,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onChanged: (_) {
+                        if (errorText != null) {
+                          setSheetState(() => errorText = null);
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        for (final pct in [25, 50, 75]) ...[
+                          Expanded(
+                            child: OutlinedButton(
+                              onPressed: () => applyPercentage(pct / 100),
+                              child: Text('$pct%'),
+                            ),
+                          ),
+                          if (pct != 75) const SizedBox(width: 8),
+                        ],
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 50,
+                      child: ElevatedButton(
+                        onPressed: submitPartial,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                        ),
+                        child: const Text(
+                          'PROCEED TO PAY',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    ).whenComplete(() {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        amountController.dispose();
+      });
+    });
+  }
+
+  void _onProceedPayment({
+    required double amount,
+    required bool isPartial,
+    required List<InvoiceItem> invoices,
+  }) {
+    // TODO: Dispatch payment event to AccountingBloc or open payment gateway
+    // e.g. widget.accountingBloc.add(PayInvoicesEvent(amount: amount, isPartial: isPartial, invoices: invoices));
+    print(
+      'Payment -> Amount: ₹${amount.toStringAsFixed(2)}, Partial: $isPartial, Invoices: ${invoices.length}',
+    );
   }
 
   void _showInvoiceDetails(BuildContext context, InvoiceItem item) {
@@ -235,6 +427,7 @@ class _DuesScreenState extends State<DuesScreen> {
       'OVERDUE' => AppColors.error,
       _ => AppColors.textSecondary,
     };
+    final bool isPaid = item.status.toUpperCase() == 'PAID';
 
     showModalBottomSheet<void>(
       context: context,
@@ -361,13 +554,18 @@ class _DuesScreenState extends State<DuesScreen> {
                 ),
                 _invoiceDetailRow(
                   Icons.payments_outlined,
-                  'Invoice amount',
-                  '₹${item.amount.toStringAsFixed(2)}',
+                  'Invoice DueAmount',
+                  '₹${item.dueAmount.toStringAsFixed(2)}',
                 ),
                 _invoiceDetailRow(
                   Icons.warning_amber_outlined,
                   'Penalty',
                   '₹${item.penaltyAmount.toStringAsFixed(2)}',
+                ),
+                _invoiceDetailRow(
+                  Icons.info_outline,
+                  'Penalty Reason',
+                  '${item.penaltyReason}',
                 ),
                 if (item.description.trim().isNotEmpty) ...[
                   const SizedBox(height: 12),
@@ -388,26 +586,86 @@ class _DuesScreenState extends State<DuesScreen> {
                   ),
                 ],
                 const SizedBox(height: 22),
-                SizedBox(
-                  width: double.infinity,
-                  height: 50,
-                  child: ElevatedButton(
-                    onPressed: () => Navigator.pop(ctx),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(14),
+                if (isPaid)
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(ctx),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      child: const Text(
+                        'CLOSE',
+                        style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                     ),
-                    child: Text(
-                      item.status.toUpperCase() == 'PAID'
-                          ? 'CLOSE'
-                          : 'PAY NOW',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
+                  )
+                else
+                  Row(
+                    children: [
+                      if (item.totalAmount > 0) ...[
+                        Expanded(
+                          child: SizedBox(
+                            height: 50,
+                            child: OutlinedButton(
+                              onPressed: () {
+                                Navigator.pop(ctx);
+                                _showPartialPaymentSheet(
+                                  context: context,
+                                  title: 'Partial Payment - ${item.title}',
+                                  maxAmount: item.totalAmount,
+                                  invoices: [item],
+                                );
+                              },
+                              style: OutlinedButton.styleFrom(
+                                foregroundColor: AppColors.primary,
+                                side: const BorderSide(color: AppColors.primary),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                              ),
+                              child: const Text(
+                                'PAY PARTIAL',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                      ],
+                      Expanded(
+                        child: SizedBox(
+                          height: 50,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(ctx);
+                              _onProceedPayment(
+                                amount: item.totalAmount,
+                                isPartial: false,
+                                invoices: [item],
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primary,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: const Text(
+                              'PAY NOW',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
               ],
             ),
           ),
@@ -440,52 +698,4 @@ class _DuesScreenState extends State<DuesScreen> {
       ),
     );
   }
-
-
-  /*void _showInvoiceDetails(BuildContext context, InvoiceItem item) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-        child: SingleChildScrollView(
-          child: SafeArea(
-            top: false,
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(item.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                  const Divider(),
-                  const SizedBox(height: 16), ListTile(title: Text("Invoice #"), trailing: Text(item.invoiceNumber, style: TextStyle(color: Colors.black, fontSize: 15, fontWeight: FontWeight.w500))),
-                  ListTile(title: Text("Due date"), trailing: Text("${item.dueDate.day}/${item.dueDate.month}/${item.dueDate.year}", style: const TextStyle(color: Colors.black, fontSize: 15))),
-                  ListTile(title: Text("Flat"), trailing: Text(item.flatId.toString() ?? '', style: TextStyle(color: Colors.black, fontSize: 15))),
-                   ListTile(title: Text("Building"), trailing: Text(item.buildingId.toString() ?? '', style: TextStyle(color: Colors.black, fontSize: 15))),
-                   ListTile(title: Text("Fine"), trailing: Text(item.penaltyAmount.toString() ?? '', style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold))),
-                  ListTile(title: Text("Amount"), trailing: Text("₹${item.amount}", style: const TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold))),
-                   ListTile(title: Text("Net Payable Amount"), trailing: Text("₹${item.totalAmount}", style: TextStyle(color: Colors.red, fontSize: 16, fontWeight: FontWeight.bold))),
-                  if ((item.description ?? '').isNotEmpty) ...[
-                    const SizedBox(height: 8),
-                    const Align(alignment: Alignment.centerLeft, child: Text("Description", style: TextStyle(fontWeight: FontWeight.bold))),
-                    const SizedBox(height: 4),
-                    Text(item.description ?? 'No description available'),
-                  ],
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text("PAY NOW"),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }*/
 }
