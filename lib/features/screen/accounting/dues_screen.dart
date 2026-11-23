@@ -50,13 +50,13 @@ class _DuesScreenState extends State<DuesScreen> {
         final List<InvoiceItem> selectedInvoices = [];
         for (int i = 0; i < state.invoices.length; i++) {
           if (_selectedIndices.contains(i)) {
-            totalSelectedAmount += state.invoices[i].dueAmount;
+            totalSelectedAmount += state.invoices[i].totalAmount;
             selectedInvoices.add(state.invoices[i]);
           }
         }
 
         return ListView(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(10),
           children: [
             // Total Due Summary Card
             Container(
@@ -209,7 +209,7 @@ class _DuesScreenState extends State<DuesScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            "₹${inv.dueAmount}",
+                            "₹${inv.totalAmount.toStringAsFixed(2)}",
                             style: const TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold),
                           ),
                           const SizedBox(height: 4),

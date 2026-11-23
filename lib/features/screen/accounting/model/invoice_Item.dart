@@ -8,15 +8,16 @@ class InvoiceItem {
   final int flatId;
   final int invoiceId;
   final String invoiceNumber;
-  final DateTime? paidAt;
+  final DateTime? invoiceGeneratedAt;
   final double penaltyAmount;
   final String? penaltyReason;
   final String societyId;
   final String status;
-  final double totalAmount;
+  final double totalDueAmount;
   final double paidAmount;
   final double balanceAmount;
   final String type;
+  final String invoiceGeneratedBy;
 
   const InvoiceItem({
     required this.dueAmount,
@@ -28,15 +29,16 @@ class InvoiceItem {
     required this.flatId,
     required this.invoiceId,
     required this.invoiceNumber,
-    this.paidAt,
+    this.invoiceGeneratedAt,
     required this.penaltyAmount,
     this.penaltyReason,
     required this.societyId,
     required this.status,
-    required this.totalAmount,
+    required this.totalDueAmount,
     required this.paidAmount,
     required this.balanceAmount,
     required this.type,
+    required this.invoiceGeneratedBy,
   });
 
   // Compatibility with existing DuesScreen references.
@@ -100,15 +102,16 @@ class InvoiceItem {
       flatId: readInt('flatId'),
       invoiceId: readInt('invoiceId'),
       invoiceNumber: json['invoiceNumber']?.toString() ?? '',
-      paidAt: readOptionalDate('paidAt'),
+      invoiceGeneratedAt: readOptionalDate('invoice_generated_at '),
       penaltyAmount: readDouble('penaltyAmount'),
       penaltyReason: json['penaltyReason']?.toString() ?? '',
       societyId: json['societyId']?.toString() ?? '',
       status: json['status']?.toString() ?? '',
-      totalAmount: readDouble('totalAmount'),
+      totalDueAmount: readDouble('total_due_amount'),
       type: json['type']?.toString() ?? '',
       paidAmount: readDouble('paidAmount'),
       balanceAmount: readDouble('balanceAmount'),
+      invoiceGeneratedBy: json['invoice_generated_by']?.toString() ?? '',
     );
   }
 
@@ -122,14 +125,15 @@ class InvoiceItem {
     'flatId': flatId,
     'invoiceId': invoiceId,
     'invoiceNumber': invoiceNumber,
-    'paidAt': paidAt?.toIso8601String(),
+    'invoiceGeneratedAt': invoiceGeneratedAt?.toIso8601String(),
     'penaltyAmount': penaltyAmount,
     'penaltyReason': penaltyReason,
     'societyId': societyId,
     'status': status,
-    'totalAmount': totalAmount,
+    'totalDueAmount': totalDueAmount,
     'type': type,
     'paidAmount': paidAmount,
     'balanceAmount': balanceAmount,
+    'invoiceGeneratedBy': invoiceGeneratedBy,
   };
 }
